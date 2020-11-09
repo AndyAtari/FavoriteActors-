@@ -3,7 +3,8 @@
 // the function should take 3 arguments - an array to be iterated over, className to be applied to the buttons, and the id of an element to append the buttons to. The button text should match the strings in our array.
 
 const favActors = ["keanu reeves", "nicolas cage", "will smith"];
-
+const baseURL = new URL("https://api.giphy.com/v1/gifs/search?q=${form}&rating=G&api_key=dc6zaTOxFJmzC&limit=10");
+const gifDiv = document.getElementById("gif-container");
 /* 
 1. def function w/ 3 arguments(arr, className, id)
 const container = document.getElementById(id)
@@ -32,13 +33,17 @@ function createButton(text, className){
   return btn
 }
 
-document.body.addEventListener("click", () => console.log("something was clicked!"))
+//document.body.addEventListener("click", () => console.log("something was clicked!"))
 
 buttonContainer.addEventListener("click", function(e) {
+    gifDiv.innerHTML = "";
     e.stopPropagation()
     if(event.target.className === "actor-button"){
-      console.log(e.target.innerText)
-
+      console.log(e.target.innerText);
+      let searchParams = baseURL.searchParams;
+      searchParams.set("q", e.target.innerText);
+      console.log(baseURL.toString());
+      fetchActors();
     }
 })
 
@@ -70,6 +75,24 @@ function attachSubmitListener(){
     renderButtons(favActors, "actor-button", "button-container");
 }
 
+function fetchActors() {
+  fetch(baseURL)
+    .then(resp => resp.json()) 
+    //.then(console.log)
+    .then(returnedData => {
+      returnedData.data.forEach(data => {
+        renderActorGif(data)
+      })
+       //console.log(returnedData.data[0].images.original.url)
+})
+}
+
+function renderActorGif(data) {
+  //const gifDiv = document.getElementById("gif-container");
+  const img = document.createElement("img");
+  img.src = data.images.original.url
+  gifDiv.appendChild(img);
+}
 
 
 
@@ -77,5 +100,6 @@ function attachSubmitListener(){
 renderButtons(favActors, "actor-button", "button-container");
 renderForm()
 attachSubmitListener()
-// before next week - attach an event listener to the button container that logs the text of the target button
-// bonus - create an form with a single input. On submit, take the input value, add it too the text array and rerender the buttons to include the new text
+
+
+
