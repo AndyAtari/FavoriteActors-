@@ -26,6 +26,7 @@ function renderButtons(arr, className, id) {
   });
 }
 
+
 function createButton(text, className){
   const btn = document.createElement("button");
   btn.className = className;
@@ -38,7 +39,7 @@ function createButton(text, className){
 buttonContainer.addEventListener("click", function(e) {
     gifDiv.innerHTML = "";
     e.stopPropagation()
-    if(event.target.className === "actor-button"){
+    if(e.target.className === "actor-button"){
       console.log(e.target.innerText);
       let searchParams = baseURL.searchParams;
       searchParams.set("q", e.target.innerText);
@@ -90,8 +91,22 @@ function fetchActors() {
 function renderActorGif(data) {
   //const gifDiv = document.getElementById("gif-container");
   const img = document.createElement("img");
-  img.src = data.images.original.url
+  img.src = data.images.fixed_height_still.url
+  img.setAttribute("data-url", data.images.fixed_height.url)
   gifDiv.appendChild(img);
+}
+
+function playPauseHandler(){
+  const gifDiv = document.getElementById("gif-container");
+  gifDiv.addEventListener("click", function(event){
+    //debugger
+    if(event.target.tagName === "IMG"){
+      const temp = event.target.src
+      event.target.src = event.target.dataset.url
+      event.target.setAttribute("data-url", temp)
+    }
+  })
+
 }
 
 
@@ -100,6 +115,6 @@ function renderActorGif(data) {
 renderButtons(favActors, "actor-button", "button-container");
 renderForm()
 attachSubmitListener()
-
+playPauseHandler()
 
 
